@@ -18,18 +18,24 @@
     <ClCompile Include="SCRABBLE.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\SCRABBLE\Scrabble\Tabla.cpp">
+    <ClCompile Include="Jugador.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\SCRABBLE\Scrabble\Jugador.cpp">
+    <ClCompile Include="Tabla.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Ficha.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\SCRABBLE\Scrabble\Tabla.h">
+    <ClInclude Include="Jugador.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\SCRABBLE\Scrabble\Jugador.h">
+    <ClInclude Include="Tabla.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Ficha.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>

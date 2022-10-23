@@ -139,13 +139,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\SCRABBLE\Scrabble\Jugador.cpp" />
-    <ClCompile Include="..\..\SCRABBLE\Scrabble\Tabla.cpp" />
+    <ClCompile Include="Ficha.cpp" />
+    <ClCompile Include="Jugador.cpp" />
     <ClCompile Include="SCRABBLE.cpp" />
+    <ClCompile Include="Tabla.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\SCRABBLE\Scrabble\Jugador.h" />
-    <ClInclude Include="..\..\SCRABBLE\Scrabble\Tabla.h" />
+    <ClInclude Include="Ficha.h" />
+    <ClInclude Include="Jugador.h" />
+    <ClInclude Include="Tabla.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
