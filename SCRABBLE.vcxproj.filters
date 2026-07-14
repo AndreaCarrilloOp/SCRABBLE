@@ -1,42 +1,49 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Archivos de origen">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Archivos de encabezado">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Archivos de recursos">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <Filter Include="Archivos de origen"><UniqueIdentifier>{65A181B2-9CE3-4B7E-AFA9-557AFC76B0B8}</UniqueIdentifier><Extensions>cpp;c</Extensions></Filter>
+    <Filter Include="Archivos de encabezado"><UniqueIdentifier>{B0E9CC08-301B-42FD-BA28-CE213A18448A}</UniqueIdentifier><Extensions>h;hpp</Extensions></Filter>
+    <Filter Include="Recursos"><UniqueIdentifier>{E3BC3070-5DBF-46BA-92CD-76348B2771A8}</UniqueIdentifier></Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SCRABBLE.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Jugador.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Tabla.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Ficha.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
+    <ClCompile Include="src\Consola.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\Cuadricula.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\DiccionarioArchivo.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\Ficha.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\GestorJuego.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\HistorialPalabras.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\ITablero.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\Jugador.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\ListaFicha.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\ListaJugador.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\ListaPalabra.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\Palabra.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\Principal.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\SCRABBLE.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\Tablero.cpp"><Filter>Archivos de origen</Filter></ClCompile>
+    <ClCompile Include="src\ValidadorPalabras.cpp"><Filter>Archivos de origen</Filter></ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Jugador.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Tabla.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Ficha.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
+    <ClInclude Include="include\Consola.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\Cuadricula.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\FabricaDiccionarioPalabras.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\Ficha.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\GestorJuego.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\HistorialPalabras.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\IDiccionarioPalabras.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\ITablero.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\Jugador.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\ListaFicha.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\ListaJugador.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\ListaPalabra.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\Palabra.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\SCRABBLE.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\Tablero.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+    <ClInclude Include="include\ValidadorPalabras.h"><Filter>Archivos de encabezado</Filter></ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Datos.txt"><Filter>Recursos</Filter></None>
+    <None Include="CMakeLists.txt"><Filter>Recursos</Filter></None>
+    <None Include="README.md"><Filter>Recursos</Filter></None>
   </ItemGroup>
 </Project>

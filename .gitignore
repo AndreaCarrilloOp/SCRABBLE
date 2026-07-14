@@ -18,7 +18,6 @@
 
 # Fortran module files
 *.mod
-*.smod
 
 # Compiled Static libraries
 *.lai
@@ -30,3 +29,46 @@
 *.exe
 *.out
 *.app
+
+# Build directories (VS Code/CMake)
+build/
+cmake-build-*/
+temp/
+
+# VS Code user settings (keep workspace settings)
+.vscode/settings.json
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Visual Studio files (legacy)
+*.vcxproj.user
+*.suo
+*.sdf
+*.opensdf
+*.tlog
+*.lastbuildstate
+*.idb
+*.ipdb
+*.pdb
+*.ilk
+*.VC.db
+
+# Debug directories
+Debug/
+Release/
+x64/
+x86/
+.vs/
+
+# Temporary files
+*.tmp
+*.temp
+~*
+*.log
+
+# Upgrade logs
+UpgradeLog*.htm
