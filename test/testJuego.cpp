@@ -1,6 +1,9 @@
 #include "Tablero.h"
 #include <stdexcept>
 #include <limits>
+#include <regex>
+#include <sstream>
+#include <vector>
 #include <iostream>
 #include <string>
 #include <unordered_set>
@@ -160,6 +163,43 @@ int main()
         CHECK(contar("\033[48;2;43;107;220m") == 12);
         CHECK(contar("\033[48;2;105;207;210m") == 24);
         CHECK(contar("\033[48;2;245;221;112m") == 1);
+
+        // Check the printable layout in both modes.
+        const auto lineas = [](const std::string &texto) {
+            std::istringstream entrada(texto);
+            std::vector<std::string> resultado;
+            std::string linea;
+            while (std::getline(entrada, linea))
+                resultado.push_back(linea);
+            return resultado;
+        };
+        const auto filas = lineas(plano);
+        const auto filasColor = lineas(std::regex_replace(color, std::regex("\033\\[[0-9;]*m"), ""));
+        CHECK(filas.size() == 33 && filasColor.size() == 33);
+        CHECK(filas[1].size() == 93 && filasColor[1] == filas[1]);
+        for (int c = 0; c < 15; ++c)
+        {
+            const auto etiqueta = std::to_string(c);
+            CHECK(filas[1].substr(3 + 6 * c + (5 - etiqueta.size()) / 2, etiqueta.size()) == etiqueta);
+        }
+        for (int f = 0; f < 15; ++f)
+        {
+            const auto &borde = filas[2 + 2 * f];
+            const auto &linea = filas[3 + 2 * f];
+            CHECK(borde.size() == 93 && linea.size() == 96);
+            CHECK(filasColor[2 + 2 * f] == borde);
+            CHECK(filasColor[3 + 2 * f].size() == linea.size());
+            for (int c = 0; c <= 15; ++c)
+            {
+                CHECK(borde[2 + 6 * c] == '+');
+                CHECK(linea[2 + 6 * c] == '|');
+                CHECK(filasColor[3 + 2 * f][2 + 6 * c] == '|');
+            }
+        }
+        CHECK(filas.back().size() == 93);
+        tablero.getCuadricula(7, 7)->setLetra(new Ficha('A'));
+        CHECK(lineas(tablero.toString(false))[17].substr(45, 5) == "  A  ");
+
     }
 
     // Linked-list tail stays valid after removal and shuffling.
