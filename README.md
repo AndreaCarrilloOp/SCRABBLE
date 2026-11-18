@@ -131,6 +131,8 @@ En terminales compatibles con secuencias ANSI se muestran las coordenadas de 0 a
 | Celeste | Doble letra |
 | Amarillo | Centro (doble palabra) |
 
+Cada casilla ocupa cinco caracteres de ancho. Se recomienda una terminal de al menos 100 columnas para evitar saltos de línea.
+
 Las fichas colocadas tienen un fondo claro. Una consola sin soporte de color o con la variable `NO_COLOR` conserva los códigos de bonificación en texto.
 
 Vista previa sin iniciar una partida:
