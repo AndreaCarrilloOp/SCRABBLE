@@ -15,6 +15,20 @@
 
 ---
 
+## Web Edition
+
+La versión web reutiliza el motor C++17 mediante WebAssembly, compilado con Emscripten. Incluye tablero interactivo, partidas locales de 2 a 4 jugadores, atril, puntuaciones e historial. No requiere servidor de juego.
+
+Para probar localmente con el SDK de Emscripten activado:
+
+```bash
+bash web/build.sh
+node web/smoke.cjs
+python3 -m http.server 8000 --directory dist
+```
+
+Abra `http://localhost:8000`. GitHub Actions compila y prueba el motor; el despliegue en GitHub Pages requiere habilitar GitHub Actions como fuente en Settings > Pages.
+
 ## Descripción
 
 SCRABBLE es una implementación en **C++17** del juego de palabras para consola. Permite partidas de **2 a 4 jugadores** sobre un tablero de **15 × 15**, con atriles de seis fichas, validación mediante un diccionario local, cálculo de puntuaciones, bonificaciones del tablero e historial de jugadas.
