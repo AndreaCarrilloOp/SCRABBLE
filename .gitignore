@@ -72,3 +72,11 @@ x86/
 
 # Upgrade logs
 UpgradeLog*.htm
+
+# WebAssembly and native CI build outputs
+/dist/
+/native-build/
+/Testing/
+/compile_commands.json
+/node_modules/
+*.wasm

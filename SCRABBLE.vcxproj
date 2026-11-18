@@ -48,6 +48,10 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <PlatformToolset Condition="'$(PlatformToolset)' == '' Or '$(PlatformToolset)' == 'v100'">v143</PlatformToolset>
+    <PlatformToolset Condition="Exists('$(VCTargetsPath)\Platforms\$(Platform)\PlatformToolsets\v145\Toolset.props')">v145</PlatformToolset>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="Shared" />
@@ -118,7 +122,6 @@
     <ClCompile Include="src\ListaPalabra.cpp" />
     <ClCompile Include="src\Palabra.cpp" />
     <ClCompile Include="src\Principal.cpp" />
-    <ClCompile Include="src\SCRABBLE.cpp" />
     <ClCompile Include="src\Tablero.cpp" />
     <ClCompile Include="src\ValidadorPalabras.cpp" />
   </ItemGroup>
@@ -136,7 +139,6 @@
     <ClInclude Include="include\ListaJugador.h" />
     <ClInclude Include="include\ListaPalabra.h" />
     <ClInclude Include="include\Palabra.h" />
-    <ClInclude Include="include\SCRABBLE.h" />
     <ClInclude Include="include\Tablero.h" />
     <ClInclude Include="include\ValidadorPalabras.h" />
   </ItemGroup>

@@ -9,7 +9,8 @@ cmake -S . -B build -A x64
 if errorlevel 1 goto ERROR
 cmake --build build --config Release
 if errorlevel 1 goto ERROR
-copy /Y "Datos.txt" "build\Release\Datos.txt" >nul
+ctest --test-dir build -C Release --output-on-failure
+if errorlevel 1 goto ERROR
 
 echo.
 echo Compilacion completada.

@@ -23,14 +23,15 @@ Implementación académica de un juego de palabras para consola, adaptada poster
 SCRABBLE/
 ├── include/                 # Clases y contratos C++
 ├── src/                     # Motor y consola
-├── test/                    # Pruebas nativas
+├── tests/
+│   ├── native/              # Pruebas del motor C++ y tablero
+│   └── web/                 # Pruebas del módulo WebAssembly
 ├── web/
 │   ├── bridge.cpp           # Adaptador C++ para el navegador
 │   ├── build.sh             # Compilación Emscripten
 │   ├── index.html           # Interfaz de usuario
 │   ├── styles.css           # Tablero y diseño adaptable
-│   ├── app.js               # Interacción con el motor WASM
-│   └── smoke.cjs            # Pruebas del módulo compilado
+│   └── app.js               # Interacción con el motor WASM
 ├── .github/workflows/
 │   ├── ci.yml               # Compilación y pruebas nativas
 │   └── pages.yml            # Compilación WASM y publicación
@@ -41,6 +42,17 @@ SCRABBLE/
 ├── compilar.bat             # Script de compilación Windows
 └── README.md
 ```
+
+### Evolución incremental del proyecto
+
+| Etapa | Alcance | Componentes |
+|---|---|---|
+| 1 | Motor académico y estructuras de datos | `include/`, `src/`, `Datos.txt` |
+| 2 | Aplicación nativa, reglas y consola | `GestorJuego`, `ITablero`, `Consola`, CMake y Visual Studio |
+| 3 | Integración WebAssembly | `web/bridge.cpp`, `web/build.sh` |
+| 4 | Interfaz web y publicación | `web/index.html`, `web/styles.css`, `web/app.js`, GitHub Pages |
+
+Las etapas son capas del mismo proyecto, no copias independientes del motor. Las pruebas se agrupan en `tests/native/` y `tests/web/`. Los directorios generados `build/`, `dist/` y `native-build/` quedan fuera del control de versiones.
 
 ## 1. Motor original en C++
 
@@ -184,7 +196,7 @@ La edición de consola utiliza C++17, la biblioteca estándar, CMake 3.16+ y CTe
 El archivo `Datos.txt` se copia automáticamente junto al ejecutable.
 
 > [!NOTE]
-> La compilación mediante CMake es la alternativa recomendada mientras se revisa la configuración de la solución nativa. Si aparece `MSB8020`, redestine la solución a un toolset instalado (por ejemplo, `v143` para Visual Studio 2022). Cierre los ejecutables antiguos y use **Build > Clean Solution** y **Build > Rebuild Solution**.
+> La solución selecciona un toolset moderno compatible con C++17 (`v143` o `v145` cuando se detecta). Si aparece `MSB8020`, compruebe que las herramientas de escritorio C++ estén instaladas y redestine la solución. CMake sigue siendo la alternativa multiplataforma.
 
 #### Compilar con CMake
 
@@ -308,7 +320,7 @@ sequenceDiagram
 | [`web/index.html`](web/index.html) | Estructura semántica y controles |
 | [`web/styles.css`](web/styles.css) | Cuadrícula verde, casillas rectangulares, colores y diseño adaptable |
 | [`web/app.js`](web/app.js) | Eventos, selección de coordenadas, renderizado y llamadas al módulo mediante `ccall` |
-| [`web/smoke.cjs`](web/smoke.cjs) | Verificación automática del motor WASM con Node.js |
+| [`tests/web/smoke.cjs`](tests/web/smoke.cjs) | Verificación automática del motor WASM con Node.js |
 
 El adaptador exporta seis operaciones: `scrabble_state`, `scrabble_start`, `scrabble_play`, `scrabble_exchange`, `scrabble_pass` y `scrabble_finish`. Las respuestas JSON incluyen el resultado, el mensaje, el estado del tablero, jugadores, atril activo, bolsa e historial.
 
@@ -318,7 +330,7 @@ Con Emscripten SDK activado, Node.js y Python 3 disponibles, ejecute desde la ra
 
 ```bash
 bash web/build.sh
-node web/smoke.cjs
+node tests/web/smoke.cjs
 python3 -m http.server 8000 --directory dist
 ```
 
