@@ -11,8 +11,14 @@
 
 bool Consola::soportaColor()
 {
+#ifdef _MSC_VER
+    std::size_t longitud = 0;
+    if (::getenv_s(&longitud, nullptr, 0, "NO_COLOR") == 0 && longitud > 0)
+        return false;
+#else
     if (std::getenv("NO_COLOR"))
         return false;
+#endif
 #ifdef _WIN32
     const HANDLE salida = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD modo = 0;
