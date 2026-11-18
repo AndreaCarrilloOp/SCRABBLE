@@ -1,4 +1,5 @@
 #include "Tablero.h"
+#include "Consola.h"
 #include <algorithm>
 #include <array>
 #include <cctype>
@@ -28,6 +29,25 @@ std::string codigoBono(const Cuadricula *casilla)
     if (casilla->getMultiplicadorLetra() == 2)
         return "2L";
     return " ";
+}
+
+constexpr const char *RESET = "\033[0m";
+constexpr const char *VERDE = "\033[38;2;38;150;55m";
+constexpr const char *ROJO = "\033[48;2;195;28;40m";
+constexpr const char *MAGENTA = "\033[48;2;151;20;144m";
+constexpr const char *AZUL = "\033[48;2;43;107;220m";
+constexpr const char *CELESTE = "\033[48;2;105;207;210m";
+constexpr const char *AMARILLO = "\033[48;2;245;221;112m";
+constexpr const char *FICHA = "\033[30;48;2;242;220;176m";
+
+const char *colorBono(const std::string &codigo)
+{
+    if (codigo == "3P") return ROJO;
+    if (codigo == "2P") return MAGENTA;
+    if (codigo == "3L") return AZUL;
+    if (codigo == "2L") return CELESTE;
+    if (codigo == "**") return AMARILLO;
+    return nullptr;
 }
 }
 
@@ -73,6 +93,17 @@ std::string Tablero::normalizarPalabra(const std::string &palabra)
 bool Tablero::dentroDelTablero(int fila, int columna) const
 {
     return fila >= 0 && fila < TAMANIO && columna >= 0 && columna < TAMANIO;
+}
+
+bool Tablero::coordenadasValidas(int fila, int columna, std::size_t longitud,
+                                  char orientacion) const
+{
+    if (!dentroDelTablero(fila, columna) || longitud == 0 || longitud > TAMANIO ||
+        (orientacion != 'H' && orientacion != 'V'))
+        return false;
+    const int desplazamiento = static_cast<int>(longitud) - 1;
+    return dentroDelTablero(fila + (orientacion == 'V' ? desplazamiento : 0),
+                            columna + (orientacion == 'H' ? desplazamiento : 0));
 }
 
 bool Tablero::tableroVacio() const
@@ -151,7 +182,8 @@ void Tablero::agregarJugador(int cantidad)
     {
         std::string nombre;
         std::cout << "Nombre del jugador " << i << ": ";
-        std::getline(std::cin >> std::ws, nombre);
+        if (!std::getline(std::cin, nombre))
+            throw std::runtime_error("Registro de jugadores interrumpido.");
         if (nombre.empty())
             nombre = "Jugador " + std::to_string(i);
         std::string base = nombre;
@@ -242,6 +274,8 @@ bool Tablero::palabraCruzaCentro(int fila, int columna, const std::string &palab
                                  char orientacion) const
 {
     orientacion = mayuscula(orientacion);
+    if (!coordenadasValidas(fila, columna, palabra.size(), orientacion))
+        return false;
     const int fin = static_cast<int>(palabra.size()) - 1;
     if (orientacion == 'H')
         return fila == 7 && columna <= 7 && columna + fin >= 7;
@@ -327,6 +361,8 @@ std::string Tablero::construirPalabraExtendida(int fila, int columna,
 {
     const std::string palabra = normalizarPalabra(entrada);
     orientacion = mayuscula(orientacion);
+    if (!coordenadasValidas(fila, columna, palabra.size(), orientacion))
+        return {};
     const int df = orientacion == 'V' ? 1 : 0;
     const int dc = orientacion == 'H' ? 1 : 0;
 
@@ -357,9 +393,14 @@ std::string Tablero::construirPalabraExtendida(int fila, int columna,
     return resultado;
 }
 
-bool Tablero::validarCruces(int fila, int columna, const std::string &palabra,
+bool Tablero::validarCruces(int fila, int columna, const std::string &entrada,
                             char orientacion) const
 {
+    const auto palabra = normalizarPalabra(entrada);
+    orientacion = mayuscula(orientacion);
+    if (!coordenadasValidas(fila, columna, palabra.size(), orientacion) ||
+        !std::all_of(palabra.begin(), palabra.end(), [](char c) { return c >= 'A' && c <= 'Z'; }))
+        return false;
     if (!diccionario)
         return true;
     for (int i = 0; i < static_cast<int>(palabra.size()); ++i)
@@ -395,6 +436,18 @@ int Tablero::calcularPuntajePalabra(int fila, int columna,
             multiplicadorPalabra *= casilla->getMultiplicadorPalabra();
         }
     }
+    // Count adjacent existing letters without activating their bonuses again.
+    const int df = orientacion == 'V' ? 1 : 0;
+    const int dc = orientacion == 'H' ? 1 : 0;
+    for (int f = fila - df, c = columna - dc;
+         dentroDelTablero(f, c) && tabla[f][c]->isOcupada(); f -= df, c -= dc)
+        subtotal += tabla[f][c]->getLetra()->getPuntaje();
+
+    const int longitud = static_cast<int>(palabra.size());
+    for (int f = fila + df * longitud, c = columna + dc * longitud;
+         dentroDelTablero(f, c) && tabla[f][c]->isOcupada(); f += df, c += dc)
+        subtotal += tabla[f][c]->getLetra()->getPuntaje();
+
     return subtotal * multiplicadorPalabra;
 }
 
@@ -441,20 +494,16 @@ int Tablero::calcularPuntajeCruces(int fila, int columna,
     return total;
 }
 
-bool Tablero::jugarPalabra(int fila, int columna, const std::string &entrada,
-                           char orientacion, Jugador *jugador,
-                           std::string *error, int *puntajeObtenido)
+bool Tablero::validarJugada(int fila, int columna, const std::string &palabra,
+                            char orientacion, Jugador *jugador,
+                            std::string &palabraCompleta, std::string *error) const
 {
     auto fallar = [&](const std::string &mensaje) {
         if (error)
             *error = mensaje;
-        if (puntajeObtenido)
-            *puntajeObtenido = 0;
         return false;
     };
 
-    std::string palabra = normalizarPalabra(entrada);
-    orientacion = mayuscula(orientacion);
     if (!jugador)
         return fallar("El jugador no es válido.");
     if (palabra.size() < 2 || palabra.size() > MAX_LONGITUD_PALABRA)
@@ -464,9 +513,7 @@ bool Tablero::jugarPalabra(int fila, int columna, const std::string &entrada,
     if (orientacion != 'H' && orientacion != 'V')
         return fallar("La orientación debe ser H o V.");
 
-    int ultimaFila = fila + (orientacion == 'V' ? static_cast<int>(palabra.size()) - 1 : 0);
-    int ultimaColumna = columna + (orientacion == 'H' ? static_cast<int>(palabra.size()) - 1 : 0);
-    if (!dentroDelTablero(fila, columna) || !dentroDelTablero(ultimaFila, ultimaColumna))
+    if (!coordenadasValidas(fila, columna, palabra.size(), orientacion))
         return fallar("La palabra no cabe en el tablero.");
 
     int fichasNuevas = 0;
@@ -492,11 +539,28 @@ bool Tablero::jugarPalabra(int fila, int columna, const std::string &entrada,
     if (!jugadorTieneFichas(jugador, fila, columna, palabra, orientacion))
         return fallar("El jugador no tiene todas las fichas necesarias.");
 
-    std::string palabraCompleta = construirPalabraExtendida(fila, columna, palabra, orientacion);
+    palabraCompleta = construirPalabraExtendida(fila, columna, palabra, orientacion);
     if (diccionario && !diccionario->contiene(palabraCompleta))
         return fallar("La palabra '" + palabraCompleta + "' no está en el diccionario.");
     if (!validarCruces(fila, columna, palabra, orientacion))
         return fallar("Una de las palabras cruzadas no está en el diccionario.");
+
+    if (error)
+        error->clear();
+    return true;
+}
+
+bool Tablero::jugarPalabra(int fila, int columna, const std::string &entrada,
+                           char orientacion, Jugador *jugador,
+                           std::string *error, int *puntajeObtenido)
+{
+    const std::string palabra = normalizarPalabra(entrada);
+    orientacion = mayuscula(orientacion);
+    if (puntajeObtenido)
+        *puntajeObtenido = 0;
+    std::string palabraCompleta;
+    if (!validarJugada(fila, columna, palabra, orientacion, jugador, palabraCompleta, error))
+        return false;
 
     int puntaje = calcularPuntajePalabra(fila, columna, palabra, orientacion) +
                   calcularPuntajeCruces(fila, columna, palabra, orientacion);
@@ -543,25 +607,9 @@ void Tablero::palabraInicial(std::string palabra, char posicion, Jugador *jugado
 bool Tablero::palabraAprobada(int columna, int fila, Jugador *jugador,
                               std::string palabra, char orientacion)
 {
-    palabra = normalizarPalabra(palabra);
-    orientacion = mayuscula(orientacion);
-    if (!jugador || (orientacion != 'H' && orientacion != 'V'))
-        return false;
-    int ultimaFila = fila + (orientacion == 'V' ? static_cast<int>(palabra.size()) - 1 : 0);
-    int ultimaColumna = columna + (orientacion == 'H' ? static_cast<int>(palabra.size()) - 1 : 0);
-    if (!dentroDelTablero(fila, columna) || !dentroDelTablero(ultimaFila, ultimaColumna))
-        return false;
-    for (int i = 0; i < static_cast<int>(palabra.size()); ++i)
-    {
-        int f = fila + (orientacion == 'V' ? i : 0);
-        int c = columna + (orientacion == 'H' ? i : 0);
-        if (tabla[f][c]->isOcupada() && tabla[f][c]->getLetra()->getLetra() != palabra[i])
-            return false;
-    }
-    return tieneConexion(fila, columna, palabra, orientacion) &&
-           jugadorTieneFichas(jugador, fila, columna, palabra, orientacion) &&
-           (!diccionario || diccionario->contiene(construirPalabraExtendida(fila, columna, palabra, orientacion))) &&
-           validarCruces(fila, columna, palabra, orientacion);
+    std::string palabraCompleta;
+    return validarJugada(fila, columna, normalizarPalabra(palabra),
+                         mayuscula(orientacion), jugador, palabraCompleta, nullptr);
 }
 
 bool Tablero::compararArchivo(std::string palabra) const
@@ -742,44 +790,83 @@ void Tablero::juegoCompleto()
 
 std::string Tablero::toString() const
 {
+    return toString(false);
+}
+
+std::string Tablero::toString(bool colores) const
+{
+    constexpr int ANCHO_CELDA = 5;
+    const std::string vacia(ANCHO_CELDA, ' ');
+    const std::string borde(ANCHO_CELDA, '-');
+    const auto centrar = [&](const std::string &texto) {
+        const int espacios = ANCHO_CELDA - static_cast<int>(texto.size());
+        return std::string(espacios / 2, ' ') + texto +
+               std::string(espacios - espacios / 2, ' ');
+    };
     std::ostringstream salida;
-    salida << "     ";
+    const auto verde = colores ? VERDE : "";
+    const auto reset = colores ? RESET : "";
+    salida << "--- TABLERO ACTUAL ---\n";
+    salida << verde << "   ";
     for (int columna = 0; columna < TAMANIO; ++columna)
-        salida << std::setw(4) << columna;
-    salida << '\n';
+        salida << centrar(std::to_string(columna)) << ' ';
+    salida << reset << '\n';
+
+    const auto separador = [&]() {
+        salida << verde << "  +";
+        for (int columna = 0; columna < TAMANIO; ++columna)
+            salida << borde << '+';
+        salida << reset << '\n';
+    };
+
     for (int fila = 0; fila < TAMANIO; ++fila)
     {
-        salida << "   +";
-        for (int columna = 0; columna < TAMANIO; ++columna)
-            salida << "---+";
-        salida << '\n' << std::setw(2) << fila << " |";
+        separador();
+        salida << verde << "  |" << reset;
         for (int columna = 0; columna < TAMANIO; ++columna)
         {
-            Cuadricula *casilla = tabla[fila][columna];
+            const Cuadricula *casilla = tabla[fila][columna];
             if (casilla->isOcupada() && casilla->getLetra())
-                salida << ' ' << casilla->getLetra()->getLetra() << " |";
+            {
+                if (colores) salida << FICHA;
+                salida << centrar(std::string(1, casilla->getLetra()->getLetra()));
+                salida << reset;
+            }
             else
             {
-                std::string bono = codigoBono(casilla);
-                if (bono.size() == 1)
-                    salida << "   |";
+                const std::string bono = codigoBono(casilla);
+                const char *color = colorBono(bono);
+                if (colores && color)
+                    salida << color << vacia << reset;
                 else
-                    salida << bono << " |";
+                    salida << centrar(bono);
             }
+            salida << verde << '|' << reset;
         }
-        salida << '\n';
+        salida << verde << ' ' << std::setw(2) << fila << reset << '\n';
     }
-    salida << "   +";
-    for (int columna = 0; columna < TAMANIO; ++columna)
-        salida << "---+";
-    salida << '\n';
+    separador();
     return salida.str();
 }
 
 void Tablero::mostrar() const
 {
-    std::cout << toString();
-    std::cout << "Leyenda: ** centro, 2P/3P palabra, 2L/3L letra.\n";
+    mostrar(Consola::soportaColor());
+}
+
+void Tablero::mostrar(bool colores) const
+{
+    std::cout << toString(colores);
+    if (colores)
+    {
+        std::cout << ROJO << "   " << RESET << " 3P   "
+                  << MAGENTA << "   " << RESET << " 2P   "
+                  << AZUL << "   " << RESET << " 3L   "
+                  << CELESTE << "   " << RESET << " 2L   "
+                  << AMARILLO << "   " << RESET << " Centro\n";
+    }
+    else
+        std::cout << "Leyenda: ** centro, 2P/3P palabra, 2L/3L letra.\n";
 }
 
 std::string Tablero::toStringJugador() const { return jugadores->toStringJugador(); }

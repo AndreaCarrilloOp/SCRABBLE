@@ -8,6 +8,7 @@
 #include "ListaFicha.h"
 #include "ListaJugador.h"
 #include "ValidadorPalabras.h"
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -30,6 +31,10 @@ private:
     static std::string normalizarPalabra(const std::string &palabra);
     bool dentroDelTablero(int fila, int columna) const;
     bool tableroVacio() const;
+    bool coordenadasValidas(int fila, int columna, std::size_t longitud, char orientacion) const;
+    bool validarJugada(int fila, int columna, const std::string &palabra,
+                        char orientacion, Jugador *jugador, std::string &palabraCompleta,
+                        std::string *error) const;
     bool tieneConexion(int fila, int columna, const std::string &palabra, char orientacion) const;
     bool jugadorTieneFichas(const Jugador *jugador, int fila, int columna,
                             const std::string &palabra, char orientacion) const;
@@ -108,7 +113,9 @@ public:
     void juegoCompleto();
 
     void mostrar() const;
+    void mostrar(bool colores) const;
     std::string toString() const;
+    std::string toString(bool colores) const;
     std::string toStringJugador() const;
 };
 

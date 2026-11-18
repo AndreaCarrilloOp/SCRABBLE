@@ -1,0 +1,44 @@
+name: C++ build and tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build --config Release
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+
+  visual-studio:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v2
+      - name: Rebuild native Visual Studio solution
+        shell: pwsh
+        run: msbuild SCRABBLE.sln /m /t:Rebuild /p:Configuration=Release /p:Platform=x64 "/p:OutDir=$env:GITHUB_WORKSPACE/native-build/"
+      - name: Check native executable and board preview
+        shell: pwsh
+        run: |
+          $exe = Join-Path $env:GITHUB_WORKSPACE 'native-build/SCRABBLE.exe'
+          if (-not (Test-Path $exe)) { throw 'Native executable not found' }
+          $preview = & $exe --preview-plain | Out-String
+          if ($LASTEXITCODE -ne 0 -or $preview -notmatch 'TABLERO ACTUAL' -or $preview -notmatch '3P') { throw 'Board preview failed' }
+          $color = & $exe --preview-color | Out-String
+          if ($LASTEXITCODE -ne 0 -or -not $color.Contains([string][char]27 + '[48;2;')) { throw 'ANSI color preview failed' }

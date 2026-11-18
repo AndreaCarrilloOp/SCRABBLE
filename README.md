@@ -15,6 +15,20 @@
 
 ---
 
+## Web Edition
+
+La versión web reutiliza el motor C++17 mediante WebAssembly, compilado con Emscripten. Incluye tablero interactivo, partidas locales de 2 a 4 jugadores, atril, puntuaciones e historial. No requiere servidor de juego.
+
+Para probar localmente con el SDK de Emscripten activado:
+
+```bash
+bash web/build.sh
+node web/smoke.cjs
+python3 -m http.server 8000 --directory dist
+```
+
+Abra `http://localhost:8000`. GitHub Actions compila y prueba el motor; el despliegue en GitHub Pages requiere habilitar GitHub Actions como fuente en Settings > Pages.
+
 ## Descripción
 
 SCRABBLE es una implementación en **C++17** del juego de palabras para consola. Permite partidas de **2 a 4 jugadores** sobre un tablero de **15 × 15**, con atriles de seis fichas, validación mediante un diccionario local, cálculo de puntuaciones, bonificaciones del tablero e historial de jugadas.
@@ -24,7 +38,7 @@ El proyecto aplica programación orientada a objetos, estructuras enlazadas pers
 ## Características principales
 
 - Partidas para **2 a 4 jugadores**.
-- Tablero clásico de **15 × 15 casillas**.
+- Tablero clásico de **15 × 15 casillas** con cuadrícula verde y casillas de bonificación a color.
 - Atril de **6 fichas por jugador**.
 - Selección aleatoria del jugador inicial.
 - Colocación horizontal o vertical de palabras.
@@ -63,7 +77,6 @@ SCRABBLE/
 ├── SCRABBLE.sln             # Solución de Visual Studio
 ├── SCRABBLE.vcxproj         # Proyecto de Visual Studio
 ├── compilar.bat             # Compilación automatizada en Windows
-├── CAMBIOS_REALIZADOS.md    # Resumen de correcciones aplicadas
 └── README.md                # Documentación principal
 ```
 
@@ -72,9 +85,9 @@ SCRABBLE/
 ### Opción 1: Visual Studio
 
 - Windows 10 u 11.
-- Visual Studio 2022.
+- Visual Studio 2022 o posterior.
 - Componente **Desarrollo para el escritorio con C++**.
-- Toolset `v143` o una versión compatible.
+- Toolset de C++ predeterminado de la instalación de Visual Studio (compatible con C++17).
 
 ### Opción 2: CMake
 
@@ -95,7 +108,7 @@ SCRABBLE/
 El archivo `Datos.txt` se copia automáticamente junto al ejecutable.
 
 > [!NOTE]
-> El proyecto está configurado para C++17 y el toolset `v143`. Si Visual Studio solicita actualizarlo, seleccione **Retarget Projects**.
+> El proyecto utiliza C++17 y el toolset predeterminado de la instalación (por ejemplo, `v143` en Visual Studio 2022). Si existen binarios antiguos, cierre el juego y ejecute **Build > Clean Solution** y **Build > Rebuild Solution**. No ejecute la última versión compilada si la nueva compilación falla.
 
 ## Compilar con CMake
 
@@ -120,6 +133,34 @@ Según el generador utilizado, el ejecutable también podría encontrarse direct
 ./build/SCRABBLE
 ```
 
+## Vista previa del tablero
+
+En terminales compatibles con secuencias ANSI se muestran las coordenadas de 0 a 14 y las casillas de bonificación:
+
+| Color | Bonificación |
+|---|---|
+| Rojo | Triple palabra |
+| Magenta | Doble palabra |
+| Azul | Triple letra |
+| Celeste | Doble letra |
+| Amarillo | Centro (doble palabra) |
+
+Cada casilla ocupa cinco caracteres de ancho. Se recomienda una terminal de al menos 100 columnas para evitar saltos de línea.
+
+Las fichas colocadas tienen un fondo claro. Una consola sin soporte de color o con la variable `NO_COLOR` conserva los códigos de bonificación en texto.
+
+Vista previa sin iniciar una partida:
+
+```powershell
+.\build\Release\SCRABBLE.exe --preview
+```
+
+```bash
+./build/SCRABBLE --preview
+```
+
+Use `--preview-plain` para forzar texto o `--preview-color` para generar explícitamente la salida ANSI.
+
 ## Compilar automáticamente en Windows
 
 También puede utilizar el script incluido:
@@ -138,7 +179,7 @@ cmake --build build --config Release
 ctest --test-dir build -C Release --output-on-failure
 ```
 
-Las pruebas incluidas verifican operaciones fundamentales del juego, como la carga del diccionario, la administración de fichas y la lógica básica del tablero.
+Las pruebas incluidas verifican jugadas válidas e inválidas, puntuación de palabras extendidas, intercambio de fichas, integridad de la lista enlazada y la distribución de las bonificaciones. Las comprobaciones se ejecutan también en compilaciones Release.
 
 ## Flujo de una partida
 
