@@ -795,19 +795,27 @@ std::string Tablero::toString() const
 
 std::string Tablero::toString(bool colores) const
 {
+    constexpr int ANCHO_CELDA = 5;
+    const std::string vacia(ANCHO_CELDA, ' ');
+    const std::string borde(ANCHO_CELDA, '-');
+    const auto centrar = [&](const std::string &texto) {
+        const int espacios = ANCHO_CELDA - static_cast<int>(texto.size());
+        return std::string(espacios / 2, ' ') + texto +
+               std::string(espacios - espacios / 2, ' ');
+    };
     std::ostringstream salida;
     const auto verde = colores ? VERDE : "";
     const auto reset = colores ? RESET : "";
     salida << "--- TABLERO ACTUAL ---\n";
     salida << verde << "   ";
     for (int columna = 0; columna < TAMANIO; ++columna)
-        salida << std::setw(2) << columna << "  ";
+        salida << centrar(std::to_string(columna)) << ' ';
     salida << reset << '\n';
 
     const auto separador = [&]() {
         salida << verde << "  +";
         for (int columna = 0; columna < TAMANIO; ++columna)
-            salida << "---+";
+            salida << borde << '+';
         salida << reset << '\n';
     };
 
@@ -821,7 +829,7 @@ std::string Tablero::toString(bool colores) const
             if (casilla->isOcupada() && casilla->getLetra())
             {
                 if (colores) salida << FICHA;
-                salida << ' ' << casilla->getLetra()->getLetra() << ' ';
+                salida << centrar(std::string(1, casilla->getLetra()->getLetra()));
                 salida << reset;
             }
             else
@@ -829,11 +837,9 @@ std::string Tablero::toString(bool colores) const
                 const std::string bono = codigoBono(casilla);
                 const char *color = colorBono(bono);
                 if (colores && color)
-                    salida << color << "   " << reset;
-                else if (bono.size() == 2)
-                    salida << bono << ' ';
+                    salida << color << vacia << reset;
                 else
-                    salida << "   ";
+                    salida << centrar(bono);
             }
             salida << verde << '|' << reset;
         }
