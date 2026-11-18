@@ -71,9 +71,9 @@ SCRABBLE/
 ### Opción 1: Visual Studio
 
 - Windows 10 u 11.
-- Visual Studio 2022.
+- Visual Studio 2022 o posterior.
 - Componente **Desarrollo para el escritorio con C++**.
-- Toolset `v143` o una versión compatible.
+- Toolset de C++ predeterminado de la instalación de Visual Studio (compatible con C++17).
 
 ### Opción 2: CMake
 
@@ -94,7 +94,7 @@ SCRABBLE/
 El archivo `Datos.txt` se copia automáticamente junto al ejecutable.
 
 > [!NOTE]
-> El proyecto está configurado para C++17 y el toolset `v143`. Si Visual Studio solicita actualizarlo, seleccione **Retarget Projects**.
+> El proyecto utiliza C++17 y el toolset predeterminado de la instalación (por ejemplo, `v143` en Visual Studio 2022). Si existen binarios antiguos, cierre el juego y ejecute **Build > Clean Solution** y **Build > Rebuild Solution**. No ejecute la última versión compilada si la nueva compilación falla.
 
 ## Compilar con CMake
 
