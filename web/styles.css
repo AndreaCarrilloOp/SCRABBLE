@@ -74,7 +74,10 @@ summary { cursor:pointer; color:var(--text); }
 .site-footer { margin-top:32px; border-top:1px solid var(--line); padding:22px 0; display:grid; grid-template-columns:1fr auto; align-items:center; gap:12px 20px; color:var(--muted); }
 .footer-brand { display:grid; gap:3px; font-size:12px; }
 .footer-brand strong { color:var(--text); font-weight:600; font-size:14px; }
-.site-footer nav { display:flex; flex-wrap:wrap; gap:16px; font-size:13px; }
+.site-footer nav { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+.footer-social { display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border:1px solid var(--line); border-radius:10px; color:var(--muted); background:var(--surface); transition:color .15s ease,border-color .15s ease,background .15s ease; }
+.footer-social:hover { color:var(--accent); border-color:var(--accent); background:#18281d; text-decoration:none; }
+.footer-social svg { display:block; }
 .footer-note { grid-column:1/-1; margin:0; font-size:11px; }
 [hidden] { display:none!important; }
 @media(max-width:960px) {
