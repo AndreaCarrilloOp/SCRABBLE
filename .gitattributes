@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Preserve executable script line endings across platforms
+*.sh text eol=lf
+*.bat text eol=crlf

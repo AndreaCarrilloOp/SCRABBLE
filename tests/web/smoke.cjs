@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const createScrabble = require('../dist/engine.js');
+const createScrabble = require('../../dist/engine.js');
 (async () => {
   const engine = await createScrabble();
   const call = (name, types = [], args = []) =>

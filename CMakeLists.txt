@@ -18,7 +18,6 @@ set(SCRABBLE_CORE_SOURCES
     src/ListaJugador.cpp
     src/ListaPalabra.cpp
     src/Palabra.cpp
-    src/SCRABBLE.cpp
     src/Tablero.cpp
     src/ValidadorPalabras.cpp
 )
@@ -45,7 +44,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Datos.txt
 
 include(CTest)
 if(BUILD_TESTING)
-    add_executable(scrabble_tests test/testJuego.cpp)
+    add_executable(scrabble_tests tests/native/testJuego.cpp)
     target_link_libraries(scrabble_tests PRIVATE scrabble_core)
     add_test(NAME funcionamiento_scrabble COMMAND scrabble_tests)
     add_test(NAME tablero_sin_color COMMAND SCRABBLE --preview-plain)
