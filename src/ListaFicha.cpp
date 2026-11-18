@@ -1,11 +1,12 @@
 #include "ListaFicha.h"
 #include <algorithm>
+#include <cctype>
 #include <fstream>
 #include <random>
 #include <sstream>
 #include <vector>
 
-ListaFicha::ListaFicha() : cabeza(nullptr), cantidad(0) {}
+ListaFicha::ListaFicha() : cabeza(nullptr), cola(nullptr), cantidad(0) {}
 
 ListaFicha::~ListaFicha()
 {
@@ -35,15 +36,11 @@ void ListaFicha::ingresaFicha(Ficha *ficha)
     if (!ficha)
         return;
     Nodo *nuevo = new Nodo(ficha);
-    if (!cabeza)
-        cabeza = nuevo;
+    if (cola)
+        cola->siguiente = nuevo;
     else
-    {
-        Nodo *actual = cabeza;
-        while (actual->siguiente)
-            actual = actual->siguiente;
-        actual->siguiente = nuevo;
-    }
+        cabeza = nuevo;
+    cola = nuevo;
     ++cantidad;
 }
 
@@ -69,6 +66,8 @@ Ficha *ListaFicha::eliminarFichaEspecifica(char letra)
                 anterior->siguiente = actual->siguiente;
             else
                 cabeza = actual->siguiente;
+            if (cola == actual)
+                cola = anterior;
             Ficha *resultado = actual->ficha;
             delete actual;
             --cantidad;
@@ -95,6 +94,8 @@ Ficha *ListaFicha::eliminarRetornar(int indice)
         anterior->siguiente = actual->siguiente;
     else
         cabeza = actual->siguiente;
+    if (cola == actual)
+        cola = anterior;
     Ficha *resultado = actual->ficha;
     delete actual;
     --cantidad;
@@ -115,12 +116,14 @@ void ListaFicha::barajar()
     if (cantidad < 2)
         return;
     std::vector<Ficha *> fichas;
-    while (cantidad > 0)
-        fichas.push_back(eliminarRetornar(0));
+    fichas.reserve(static_cast<std::size_t>(cantidad));
+    for (Nodo *actual = cabeza; actual; actual = actual->siguiente)
+        fichas.push_back(actual->ficha);
     static std::mt19937 generador(std::random_device{}());
     std::shuffle(fichas.begin(), fichas.end(), generador);
-    for (Ficha *ficha : fichas)
-        ingresaFicha(ficha);
+    std::size_t i = 0;
+    for (Nodo *actual = cabeza; actual; actual = actual->siguiente)
+        actual->ficha = fichas[i++];
 }
 
 bool ListaFicha::encuentrada(char letra) const { return contar(letra) > 0; }

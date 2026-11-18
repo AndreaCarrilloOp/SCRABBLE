@@ -15,6 +15,7 @@ private:
     };
 
     Nodo *cabeza;
+    Nodo *cola;
     int cantidad;
 
 public:

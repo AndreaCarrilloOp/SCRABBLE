@@ -74,9 +74,11 @@ char ITablero::solicitarOrientacion()
         std::string entrada;
         if (!std::getline(std::cin, entrada))
             return 'H';
-        if (!entrada.empty())
+        std::istringstream flujo(entrada);
+        char orientacion, sobrante;
+        if ((flujo >> orientacion) && !(flujo >> sobrante))
         {
-            char orientacion = static_cast<char>(std::toupper(static_cast<unsigned char>(entrada[0])));
+            orientacion = static_cast<char>(std::toupper(static_cast<unsigned char>(orientacion)));
             if (orientacion == 'H' || orientacion == 'V')
                 return orientacion;
         }
@@ -105,9 +107,11 @@ bool ITablero::solicitarConfirmacion(const std::string &mensaje)
         std::string entrada;
         if (!std::getline(std::cin, entrada))
             return true;
-        if (entrada.empty())
+        std::istringstream flujo(entrada);
+        char respuesta, sobrante;
+        if (!(flujo >> respuesta) || (flujo >> sobrante))
             continue;
-        char respuesta = static_cast<char>(std::toupper(static_cast<unsigned char>(entrada[0])));
+        respuesta = static_cast<char>(std::toupper(static_cast<unsigned char>(respuesta)));
         if (respuesta == 'S')
             return true;
         if (respuesta == 'N')

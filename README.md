@@ -24,7 +24,7 @@ El proyecto aplica programación orientada a objetos, estructuras enlazadas pers
 ## Características principales
 
 - Partidas para **2 a 4 jugadores**.
-- Tablero clásico de **15 × 15 casillas**.
+- Tablero clásico de **15 × 15 casillas** con cuadrícula verde y casillas de bonificación a color.
 - Atril de **6 fichas por jugador**.
 - Selección aleatoria del jugador inicial.
 - Colocación horizontal o vertical de palabras.
@@ -63,7 +63,6 @@ SCRABBLE/
 ├── SCRABBLE.sln             # Solución de Visual Studio
 ├── SCRABBLE.vcxproj         # Proyecto de Visual Studio
 ├── compilar.bat             # Compilación automatizada en Windows
-├── CAMBIOS_REALIZADOS.md    # Resumen de correcciones aplicadas
 └── README.md                # Documentación principal
 ```
 
@@ -120,6 +119,32 @@ Según el generador utilizado, el ejecutable también podría encontrarse direct
 ./build/SCRABBLE
 ```
 
+## Vista previa del tablero
+
+En terminales compatibles con secuencias ANSI se muestran las coordenadas de 0 a 14 y las casillas de bonificación:
+
+| Color | Bonificación |
+|---|---|
+| Rojo | Triple palabra |
+| Magenta | Doble palabra |
+| Azul | Triple letra |
+| Celeste | Doble letra |
+| Amarillo | Centro (doble palabra) |
+
+Las fichas colocadas tienen un fondo claro. Una consola sin soporte de color o con la variable `NO_COLOR` conserva los códigos de bonificación en texto.
+
+Vista previa sin iniciar una partida:
+
+```powershell
+.\build\Release\SCRABBLE.exe --preview
+```
+
+```bash
+./build/SCRABBLE --preview
+```
+
+Use `--preview-plain` para forzar texto o `--preview-color` para generar explícitamente la salida ANSI.
+
 ## Compilar automáticamente en Windows
 
 También puede utilizar el script incluido:
@@ -138,7 +163,7 @@ cmake --build build --config Release
 ctest --test-dir build -C Release --output-on-failure
 ```
 
-Las pruebas incluidas verifican operaciones fundamentales del juego, como la carga del diccionario, la administración de fichas y la lógica básica del tablero.
+Las pruebas incluidas verifican jugadas válidas e inválidas, puntuación de palabras extendidas, intercambio de fichas, integridad de la lista enlazada y la distribución de las bonificaciones. Las comprobaciones se ejecutan también en compilaciones Release.
 
 ## Flujo de una partida
 

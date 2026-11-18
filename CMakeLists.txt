@@ -35,6 +35,11 @@ endif()
 add_executable(SCRABBLE src/Principal.cpp)
 target_link_libraries(SCRABBLE PRIVATE scrabble_core)
 
+add_custom_command(TARGET SCRABBLE POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/Datos.txt" "$<TARGET_FILE_DIR:SCRABBLE>/Datos.txt"
+    VERBATIM)
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Datos.txt
                ${CMAKE_CURRENT_BINARY_DIR}/Datos.txt COPYONLY)
 
@@ -43,4 +48,8 @@ if(BUILD_TESTING)
     add_executable(scrabble_tests test/testJuego.cpp)
     target_link_libraries(scrabble_tests PRIVATE scrabble_core)
     add_test(NAME funcionamiento_scrabble COMMAND scrabble_tests)
+    add_test(NAME tablero_sin_color COMMAND SCRABBLE --preview-plain)
+    add_test(NAME tablero_con_color COMMAND SCRABBLE --preview-color)
+    set_tests_properties(tablero_sin_color tablero_con_color PROPERTIES
+        PASS_REGULAR_EXPRESSION "TABLERO ACTUAL")
 endif()

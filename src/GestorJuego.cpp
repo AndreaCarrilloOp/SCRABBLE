@@ -39,6 +39,8 @@ void GestorJuego::inicializarJuego()
 
     interfaz->mostrarReglas();
     int cantidad = interfaz->solicitarNumeroJugadores();
+    if (!std::cin)
+        throw std::runtime_error("Registro de jugadores interrumpido.");
     juego->setNumJugadores(cantidad);
     juego->llenarBolsa();
     juego->agregarJugador(cantidad);
@@ -70,6 +72,8 @@ bool GestorJuego::ejecutarJugada(Jugador *jugador)
     char orientacion = interfaz->solicitarOrientacion();
     int fila = interfaz->solicitarFila();
     int columna = interfaz->solicitarColumna();
+    if (!std::cin)
+        return false;
 
     std::string error;
     int puntos = 0;
@@ -88,6 +92,8 @@ bool GestorJuego::ejecutarCambio(Jugador *jugador)
 {
     std::cout << jugador->getFicha()->toStringJugador() << '\n';
     std::string letras = interfaz->solicitarLetrasCambio();
+    if (!std::cin)
+        return false;
     std::string error;
     if (!juego->intercambiarFichas(jugador, letras, &error))
     {
@@ -124,7 +130,7 @@ void GestorJuego::ejecutarJuego()
     bool terminar = false;
     bool finNatural = false;
 
-    while (!terminar)
+    while (!terminar && std::cin)
     {
         mostrarEstado(jugadorActual);
         Jugador *activo = juego->getJugadores()->getJugador(jugadorActual);

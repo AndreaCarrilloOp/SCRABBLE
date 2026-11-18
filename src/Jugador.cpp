@@ -1,4 +1,5 @@
 #include "Jugador.h"
+#include <algorithm>
 #include <sstream>
 
 Jugador::Jugador() : Jugador("Jugador", 0) {}
